@@ -9,36 +9,39 @@ workflows:
               only:
                 - main
       - deploy:
-            filters:
-                branches:
-                only:
-                 - main
-            requires:
-              - build
-
+          filters:
+            branches: null
+            only:
+              - main
+          requires:
+            - build
 jobs:
-    build:
-        working_directory: ~/ExampleApplication
-        docker:
-          - image: "circleci/node:10.16.3"
+  build:
+    working_directory: ~/ExampleApplication
+    docker:
+      - image: 'circleci/node:10.16.3'
+  steps:
+    - checkout
+    - run:
+        name: update-npm
+        command: sudo npm install -g npm@5
+    - restore_cache:
+        key: 'dependency-cache-{{ checksum "package-lock.json" }}'
+    - run:
+        name: install-npm
+        command: npm install
+    - save_cache:
+        key: 'dependency-cache-{{ checksum "package-lock.json" }}'
+        paths:
+          - ./node_modules
+  deploy:
+    docker:
+      - image: 'circleci/node:10.16.3'
     steps:
-      - checkout
       - run:
-          name: update-npm
-          command: sudo npm install -g npm@5
-      - restore_cache:
-          key: 'dependency-cache-{{ checksum "package-lock.json" }}'
-      - run:
-          name: install-npm
-          command: npm install
-      - save_cache:
-          key: 'dependency-cache-{{ checksum "package-lock.json" }}'
-          paths:
-            - ./node_modules
-    deploy:
-        docker:
-        - image: "circleci/node:10.16.3"
-        steps:
-        - run:
-            name: deploy-application
-            command: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC_PUBLIC_DNS "rm -r ExampleApplication/;git clonehttps://github.com/KFNCIRL/ExampleApplication.git; source ExampleApplication/deploy.sh"
+          name: deploy-application
+          command: >-
+            ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC_PUBLIC_DNS "rm -r
+            ExampleApplication/;git
+            clonehttps://github.com/KFNCIRL/ExampleApplication.git; source
+            ExampleApplication/deploy.sh"
