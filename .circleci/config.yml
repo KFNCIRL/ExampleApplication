@@ -17,9 +17,9 @@ workflows:
               - build
 
 jobs:
-  build:
-    working_directory: ~/ExampleApplication
-    docker:
+    build:
+        working_directory: ~/ExampleApplication
+        docker:
       - image: "circleci/node:10.16.3"
     steps:
       - checkout
@@ -36,9 +36,9 @@ jobs:
           paths:
             - ./node_modules
     deploy:
-      docker:
+        docker:
         - image: "circleci/node:10.16.3"
-      steps:
+        steps:
         - run:
             name: deploy-application
             command: ssh -o StrictHostKeyChecking=no $EC2_USERNAME@$EC_PUBLIC_DNS "rm -r ExampleApplication/;git clonehttps://github.com/KFNCIRL/ExampleApplication.git; source ExampleApplication/deploy.sh"
