@@ -7,6 +7,7 @@ pm2 stop example_app
 # change dir
 cd ExampleApplication/
 # install dependencies
+npm i ngx-text-diff --legacy-peer-deps
 npm install
 # start applciation 
 pm2 start ./bin/www --name example_app
