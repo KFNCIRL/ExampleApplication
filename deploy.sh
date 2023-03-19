@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-sudo apt update && sudo apt install nodejs npm
+sudo apt-get update && sudo apt-get install nodejs npm
 # Install pm2 and nodejs load balancer
 sudo npm install -g pm2
 # stop any instances
